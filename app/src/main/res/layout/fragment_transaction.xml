@@ -4,8 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".FirstFragment">
-
+    tools:context=".TransactionFragment">
 
     <TextView
         android:id="@+id/selectAccountText"
@@ -14,51 +13,46 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:text="Select Account"
+        android:text="@string/select_account"
         android:textColor="#000"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/selectedAccountText"
+    <Spinner
+        android:id="@+id/accountSpinner"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:background="#4FCA4C4C"
-        android:fontFamily="sans-serif-black"
-        android:gravity="center"
+        android:layout_marginTop="16dp"
+        android:entries="@array/account_array"
+        android:foreground="#1E552B2B"
         android:padding="16dp"
-        android:text="My savings"
-        android:textColor="#000"
+        android:spinnerMode="dialog"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/selectAccountText" />
 
 
     <TextView
-
         android:id="@+id/selectServiceText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:text="Select Service"
+        android:text="@string/select_service"
         android:textColor="#000"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/selectedAccountText" />
+        app:layout_constraintTop_toBottomOf="@id/accountSpinner" />
 
-    <TextView
-        android:id="@+id/selectedServiceText"
+    <Spinner
+        android:id="@+id/serviceSpinner"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:background="#4F4C61CA"
-        android:fontFamily="sans-serif-black"
-        android:gravity="center"
+        android:layout_marginTop="16dp"
+        android:entries="@array/service_array"
+        android:foreground="#1E552B2B"
         android:padding="16dp"
-        android:text="Silknet"
-        android:textColor="#090000"
+        android:spinnerMode="dialog"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/selectServiceText" />
@@ -67,12 +61,15 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:visibility="gone"
+        android:layout_marginTop="16dp"
+        android:hint="@string/limit"
+        app:errorEnabled="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/selectedAccountText">
+        app:layout_constraintTop_toBottomOf="@+id/rgPaymentType">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etLimit"
             android:layout_width="match_parent"
             android:layout_height="60dp"
             tools:layout_editor_absoluteX="12dp"
@@ -83,6 +80,7 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <RadioGroup
+        android:id="@+id/rgPaymentType"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -90,31 +88,34 @@
         android:layout_marginEnd="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/selectedServiceText">
+        app:layout_constraintTop_toBottomOf="@id/serviceSpinner">
 
         <RadioButton
+            android:id="@+id/rbMonthly"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Monthly" />
+            android:text="@string/monthly" />
 
         <RadioButton
+            android:id="@+id/rbWeekly"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Weekly" />
+            android:text="@string/weekly" />
 
         <RadioButton
+            android:id="@+id/rbUntilFurtherNotice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:checked="true"
-            android:text="Until further notice" />
+            android:text="@string/until_further_notice" />
 
     </RadioGroup>
 
-
     <Button
+        android:id="@+id/btnNext"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Next"
+        android:text="@string/next"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
