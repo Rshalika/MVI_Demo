@@ -1,13 +1,11 @@
 package com.strawhat.mvidemo.fragments
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import com.strawhat.mvidemo.R
 import com.strawhat.mvidemo.TransactionDetails
 import com.strawhat.mvidemo.databinding.FragmentConfirmationBinding
 import com.strawhat.mvidemo.vms.TransactionVM

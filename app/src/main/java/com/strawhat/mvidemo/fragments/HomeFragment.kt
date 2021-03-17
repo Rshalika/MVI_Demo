@@ -1,17 +1,11 @@
 package com.strawhat.mvidemo.fragments
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
-import androidx.core.widget.addTextChangedListener
-import androidx.fragment.app.activityViewModels
-import com.strawhat.mvidemo.R
+import androidx.fragment.app.Fragment
 import com.strawhat.mvidemo.databinding.FragmentHomeBinding
-import com.strawhat.mvidemo.databinding.FragmentTransactionBinding
-import com.strawhat.mvidemo.vms.TransactionVM
 
 /**
  * [Fragment]  for creating transaction
