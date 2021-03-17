@@ -3,26 +3,44 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/FirstFragment">
+    app:startDestination="@id/HomeFragment">
 
     <fragment
-        android:id="@+id/FirstFragment"
-        android:name="com.strawhat.mvidemo.TransactionFragment"
+        android:id="@+id/HomeFragment"
+        android:name="com.strawhat.mvidemo.fragments.HomeFragment"
+        android:label="@string/home_fragment_label"
+        tools:layout="@layout/fragment_home">
+
+        <action
+            android:id="@+id/action_HomeFragment_to_CreateTransactionFragment"
+            app:destination="@id/CreateTransactionFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/CreateTransactionFragment"
+        android:name="com.strawhat.mvidemo.fragments.CreateTransactionFragment"
         android:label="@string/transaction_fragment_label"
         tools:layout="@layout/fragment_transaction">
 
         <action
-            android:id="@+id/action_FirstFragment_to_SecondFragment"
-            app:destination="@id/SecondFragment" />
+            android:id="@+id/action_CreateTransactionFragment_to_SelectDateFragment"
+            app:destination="@id/SelectDateFragment" />
     </fragment>
+
     <fragment
-        android:id="@+id/SecondFragment"
-        android:name="com.strawhat.mvidemo.ConfirmationFragment"
+        android:id="@+id/SelectDateFragment"
+        android:name="com.strawhat.mvidemo.fragments.SelectDateFragment"
         android:label="@string/confirm_fragment_label"
-        tools:layout="@layout/fragment_confirm">
+        tools:layout="@layout/fragment_select_date">
 
         <action
-            android:id="@+id/action_SecondFragment_to_FirstFragment"
-            app:destination="@id/FirstFragment" />
+            android:id="@+id/action_SelectDateFragment_to_ConfirmTransactionFragment"
+            app:destination="@id/ConfirmTransactionFragment" />
     </fragment>
+
+    <fragment
+        android:id="@+id/ConfirmTransactionFragment"
+        android:name="com.strawhat.mvidemo.fragments.SelectDateFragment"
+        android:label="@string/confirm_fragment_label"
+        tools:layout="@layout/fragment_select_date" />
 </navigation>

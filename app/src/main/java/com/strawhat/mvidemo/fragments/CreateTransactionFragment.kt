@@ -1,29 +1,37 @@
-package com.strawhat.mvidemo
+package com.strawhat.mvidemo.fragments
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.AdapterView
+import android.widget.Button
 import androidx.core.widget.addTextChangedListener
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import com.strawhat.mvidemo.R
+import com.strawhat.mvidemo.databinding.FragmentTransactionBinding
+import com.strawhat.mvidemo.vms.TransactionVM
 
 /**
- * A simple [Fragment] subclass as the default destination in the navigation.
+ * [Fragment]  for creating transaction
  */
-class TransactionFragment : Fragment() {
+class CreateTransactionFragment : Fragment() {
 
     private val viewModel: TransactionVM by activityViewModels()
 
+    private var _binding: FragmentTransactionBinding? = null
+
+    private val binding get() = _binding!!
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_transaction, container, false)
+        _binding = FragmentTransactionBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val accountSpinner: Spinner = view.findViewById(R.id.accountSpinner)
-        accountSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        binding.accountSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 viewModel.accountSelected(position)
             }
@@ -33,8 +41,7 @@ class TransactionFragment : Fragment() {
             }
         }
 
-        val serviceSpinner: Spinner = view.findViewById(R.id.serviceSpinner)
-        serviceSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        binding.serviceSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 viewModel.serviceSelected(position)
             }
@@ -44,8 +51,7 @@ class TransactionFragment : Fragment() {
             }
         }
 
-        val paymentType = view.findViewById<RadioGroup>(R.id.rgPaymentType)
-        paymentType.setOnCheckedChangeListener { _, checkedId ->
+        binding.rgPaymentType.setOnCheckedChangeListener { _, checkedId ->
             when (checkedId) {
                 R.id.rbMonthly -> {
                     viewModel.paymentTypeSelected(TransactionVM.PaymentType.MONTHLY)
@@ -61,13 +67,17 @@ class TransactionFragment : Fragment() {
             }
         }
 
-        val limit = view.findViewById<EditText>(R.id.etLimit)
-        limit.addTextChangedListener {
+        binding.etLimit.addTextChangedListener {
             viewModel.limitChanged(it.toString().toInt())
         }
 
-        view.findViewById<Button>(R.id.btnNext).setOnClickListener {
+        binding.btnNext.setOnClickListener {
             viewModel.onNextClicked()
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }
