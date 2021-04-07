@@ -11,6 +11,8 @@ class TransactionVM(application: Application) : AndroidViewModel(application) {
     fun limitChanged(limit: Int) {}
     fun onDaySelected(position: Int) {}
     fun onConfirmClicked() {}
+    fun createTransactionToSomeoneElse() {}
+    fun createTransactionToOwnAccount() {}
 
     enum class PaymentType { MONTHLY, WEEKLY, PERMANENT }
 }

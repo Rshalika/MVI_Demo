@@ -8,13 +8,24 @@
 
 
     <Button
-        android:id="@+id/btnCreateTransaction"
+        android:id="@+id/btnCreateTransactionToSomeoneElse"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/create_transaction"
+        android:text="@string/create_transaction_someone_else"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btnCreateTransactionToOwnAccount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="236dp"
+        android:text="@string/create_transaction_own_account"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnCreateTransactionToSomeoneElse" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
