@@ -6,9 +6,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import com.strawhat.mvidemo.TransactionDetails
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.flowWithLifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
+import com.strawhat.mvidemo.R
 import com.strawhat.mvidemo.databinding.FragmentConfirmationBinding
 import com.strawhat.mvidemo.vms.TransactionVM
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
 
 /**
@@ -32,27 +38,47 @@ class ConfirmationFragment : Fragment() {
         binding.btnConfirm.setOnClickListener {
             viewModel.onConfirmClicked()
         }
+        binding.btnConfirm.setOnClickListener {
+            viewModel.onConfirmClicked()
+        }
+        viewModel.viewState.observe(viewLifecycleOwner, {
+            updateView(it)
+        })
+        viewModel.eventsFlow
+            .flowWithLifecycle(this.lifecycle, Lifecycle.State.STARTED)
+            .onEach { event ->
+                when (event) {
+                    TransactionVM.Event.NavigateToStart -> {
+                        val action = ConfirmationFragmentDirections.actionConfirmTransactionFragmentToHomeFragment()
+                        findNavController().navigate(action)
+                    }
+                    else -> {
+                        // TODO: What about other navigation requests?
+                    }
+                }
+            }
+            .launchIn(lifecycleScope)
     }
 
-    fun displayTransactionDetails(transactionDetails: TransactionDetails) {
-        binding.tvTransactionDetails.text = transactionDetails.toString()
+    private fun updateView(viewState: TransactionVM.State) {
+        when (viewState.transactionType) {
+            TransactionVM.TransactionType.SOMEONE_ELSE -> {
+                activity?.title = getString(R.string.transferToSomeoneElse)
+            }
+            TransactionVM.TransactionType.OWN -> {
+                activity?.title = getString(R.string.transferToOwnAccount)
+            }
+        }
+        displayTransactionDetails(viewState)
+    }
+
+    private fun displayTransactionDetails(state: TransactionVM.State) {
+        binding.tvTransactionDetails.text =
+            getString(R.string.transaction_details_template, state.paymentType, state.service, state.account, state.startDate, state.limit)
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-    companion object {
-
-        const val TRANSACTION_DETAILS: String = "TRANSACTION_DETAILS"
-
-        fun newInstance(transactionDetails: TransactionDetails): ConfirmationFragment {
-            val fragment = ConfirmationFragment()
-            fragment.arguments = Bundle().apply {
-                putSerializable(TRANSACTION_DETAILS, transactionDetails)
-            }
-            return fragment
-        }
     }
 }

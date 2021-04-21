@@ -32,7 +32,7 @@
         android:id="@+id/spSelectDay"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:entries="@array/week_days_array"
+
         android:padding="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

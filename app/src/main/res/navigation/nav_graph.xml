@@ -30,7 +30,7 @@
     <fragment
         android:id="@+id/SelectDateFragment"
         android:name="com.strawhat.mvidemo.fragments.SelectDateFragment"
-        android:label="@string/confirm_fragment_label"
+        android:label="@string/select_start_date"
         tools:layout="@layout/fragment_select_date">
 
         <action
@@ -40,7 +40,13 @@
 
     <fragment
         android:id="@+id/ConfirmTransactionFragment"
-        android:name="com.strawhat.mvidemo.fragments.SelectDateFragment"
+        android:name="com.strawhat.mvidemo.fragments.ConfirmationFragment"
         android:label="@string/confirm_fragment_label"
-        tools:layout="@layout/fragment_select_date" />
+        tools:layout="@layout/fragment_confirmation">
+        <action
+            android:id="@+id/action_ConfirmTransactionFragment_to_HomeFragment"
+            app:destination="@id/HomeFragment"
+            app:popUpTo="@id/HomeFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
 </navigation>

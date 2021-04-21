@@ -21,8 +21,15 @@
     <string name="select_payment_day">Select payment day</string>
     <string name="choose_transaction_date">Choose transaction date</string>
     <string name="select_start_date">Select start date</string>
+    <string name="automatic_date">Select date will be automatic</string>
     <string name="create_transaction_someone_else">Create transaction to someone else</string>
     <string name="create_transaction_own_account">Create transaction - To own account</string>
+    <string name="transferToSomeoneElse">Transfer To Someone Else</string>
+    <string name="transferToOwnAccount">Transfer To Own Account</string>
+
+    <string name="transaction_details_template">Type: %1$s \n Service: %2$d \n Account: %3$d \n Date: %4$s \n Limit: %5$d </string>
+
+
     <string name="transaction_details">transaction details</string>
     <string-array name="account_array">
         <item>Savings</item>
@@ -43,6 +50,21 @@
         <item>Friday</item>
         <item>Saturday</item>
         <item>Sunday</item>
+    </string-array>
+
+    <string-array name="months_array">
+        <item>January</item>
+        <item>February</item>
+        <item>March</item>
+        <item>April</item>
+        <item>May</item>
+        <item>June</item>
+        <item>July</item>
+        <item>August</item>
+        <item>September</item>
+        <item>October</item>
+        <item>November</item>
+        <item>December</item>
     </string-array>
 
 

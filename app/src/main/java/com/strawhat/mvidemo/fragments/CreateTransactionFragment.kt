@@ -8,9 +8,15 @@ import android.widget.AdapterView
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.flowWithLifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.strawhat.mvidemo.R
 import com.strawhat.mvidemo.databinding.FragmentTransactionBinding
 import com.strawhat.mvidemo.vms.TransactionVM
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
 /**
  * [Fragment]  for creating transaction
@@ -72,6 +78,35 @@ class CreateTransactionFragment : Fragment() {
 
         binding.btnNext.setOnClickListener {
             viewModel.onNextClicked()
+        }
+        viewModel.viewState.observe(viewLifecycleOwner, {
+            updateView(it)
+        })
+        viewModel.eventsFlow
+            .flowWithLifecycle(this.lifecycle, Lifecycle.State.STARTED)
+            .onEach { event ->
+                when (event) {
+                    TransactionVM.Event.NavigateToDateFragment -> {
+                        val action = CreateTransactionFragmentDirections.actionCreateTransactionFragmentToSelectDateFragment()
+                        findNavController().navigate(action)
+                    }
+                    else -> {
+                        // TODO: What about other navigation requests?
+                    }
+                }
+            }
+            .launchIn(lifecycleScope)
+
+    }
+
+    private fun updateView(viewState: TransactionVM.State) {
+        when (viewState.transactionType) {
+            TransactionVM.TransactionType.SOMEONE_ELSE -> {
+                activity?.title = getString(R.string.transferToSomeoneElse)
+            }
+            TransactionVM.TransactionType.OWN -> {
+                activity?.title = getString(R.string.transferToOwnAccount)
+            }
         }
     }
 
