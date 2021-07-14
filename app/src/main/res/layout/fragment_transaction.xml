@@ -70,6 +70,7 @@
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etLimit"
+            android:inputType="numberDecimal|number"
             android:layout_width="match_parent"
             android:layout_height="60dp"
             tools:layout_editor_absoluteX="12dp"

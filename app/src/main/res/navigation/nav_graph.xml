@@ -25,6 +25,9 @@
         <action
             android:id="@+id/action_CreateTransactionFragment_to_SelectDateFragment"
             app:destination="@id/SelectDateFragment" />
+        <action
+            android:id="@+id/action_CreateTransactionFragment_to_HomeFragment"
+            app:destination="@id/HomeFragment" />
     </fragment>
 
     <fragment
@@ -36,6 +39,9 @@
         <action
             android:id="@+id/action_SelectDateFragment_to_ConfirmTransactionFragment"
             app:destination="@id/ConfirmTransactionFragment" />
+        <action
+            android:id="@+id/action_SelectDateFragment_to_CreateTransactionFragment"
+            app:destination="@id/CreateTransactionFragment" />
     </fragment>
 
     <fragment
@@ -48,5 +54,8 @@
             app:destination="@id/HomeFragment"
             app:popUpTo="@id/HomeFragment"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_ConfirmTransactionFragment_to_SelectDateFragment"
+            app:destination="@id/SelectDateFragment" />
     </fragment>
 </navigation>

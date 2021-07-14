@@ -5,25 +5,25 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
+import androidx.activity.OnBackPressedCallback
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.flowWithLifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
+import com.badoo.mvicore.modelWatcher
 import com.strawhat.mvidemo.R
+import com.strawhat.mvidemo.common.ObservableSourceFragment
 import com.strawhat.mvidemo.databinding.FragmentTransactionBinding
-import com.strawhat.mvidemo.vms.TransactionVM
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import com.strawhat.mvidemo.mvi.bindings.CreateTransactionBindings
+import com.strawhat.mvidemo.mvi.event.UiEvent
+import com.strawhat.mvidemo.mvi.feature.TransactionFeature
+import com.strawhat.mvidemo.mvi.feature.ViewModel
+import io.reactivex.functions.Consumer
 
 /**
  * [Fragment]  for creating transaction
  */
-class CreateTransactionFragment : Fragment() {
+class CreateTransactionFragment : ObservableSourceFragment<UiEvent>(), Consumer<ViewModel> {
 
-    private val viewModel: TransactionVM by activityViewModels()
+    private lateinit var bindings: CreateTransactionBindings
 
     private var _binding: FragmentTransactionBinding? = null
 
@@ -34,78 +34,72 @@ class CreateTransactionFragment : Fragment() {
         return binding.root
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        activity?.onBackPressedDispatcher?.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                onNext(UiEvent.BackPressed)
+            }
+        })
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        bindings = CreateTransactionBindings(this, TransactionFeature)
         binding.accountSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                viewModel.accountSelected(position)
+                onNext(UiEvent.AccountSelected(position))
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {
-                viewModel.accountSelected(0)
+                onNext(UiEvent.AccountSelected(0))
             }
         }
 
         binding.serviceSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                viewModel.serviceSelected(position)
+                onNext(UiEvent.ServiceSelected(position))
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {
-                viewModel.serviceSelected(0)
+                onNext(UiEvent.ServiceSelected(0))
             }
         }
 
         binding.rgPaymentType.setOnCheckedChangeListener { _, checkedId ->
             when (checkedId) {
                 R.id.rbMonthly -> {
-                    viewModel.paymentTypeSelected(TransactionVM.PaymentType.MONTHLY)
-
+                    onNext(UiEvent.PaymentTypeSelected(TransactionFeature.PaymentType.MONTHLY))
                 }
                 R.id.rbWeekly -> {
-                    viewModel.paymentTypeSelected(TransactionVM.PaymentType.WEEKLY)
+                    onNext(UiEvent.PaymentTypeSelected(TransactionFeature.PaymentType.WEEKLY))
 
                 }
                 R.id.rbUntilFurtherNotice -> {
-                    viewModel.paymentTypeSelected(TransactionVM.PaymentType.PERMANENT)
+                    onNext(UiEvent.PaymentTypeSelected(TransactionFeature.PaymentType.PERMANENT))
                 }
             }
         }
 
         binding.etLimit.addTextChangedListener {
-            viewModel.limitChanged(it.toString().toInt())
+            onNext(UiEvent.LimitChanged(it.toString().toInt()))
         }
 
         binding.btnNext.setOnClickListener {
-            viewModel.onNextClicked()
+            onNext(UiEvent.OnNextClicked)
         }
-        viewModel.viewState.observe(viewLifecycleOwner, {
-            updateView(it)
-        })
-        viewModel.eventsFlow
-            .flowWithLifecycle(this.lifecycle, Lifecycle.State.STARTED)
-            .onEach { event ->
-                when (event) {
-                    TransactionVM.Event.NavigateToDateFragment -> {
-                        val action = CreateTransactionFragmentDirections.actionCreateTransactionFragmentToSelectDateFragment()
-                        findNavController().navigate(action)
-                    }
-                    else -> {
-                        // TODO: What about other navigation requests?
-                    }
-                }
-            }
-            .launchIn(lifecycleScope)
-
+        bindings.setup(this)
     }
 
-    private fun updateView(viewState: TransactionVM.State) {
-        when (viewState.transactionType) {
-            TransactionVM.TransactionType.SOMEONE_ELSE -> {
-                activity?.title = getString(R.string.transferToSomeoneElse)
-            }
-            TransactionVM.TransactionType.OWN -> {
-                activity?.title = getString(R.string.transferToOwnAccount)
+    private val watcher = modelWatcher<ViewModel> {
+        watch(ViewModel::transactionType) { transactionType ->
+            when (transactionType) {
+                TransactionFeature.TransactionType.SOMEONE_ELSE -> {
+                    activity?.title = getString(R.string.transferToSomeoneElse)
+                }
+                TransactionFeature.TransactionType.OWN -> {
+                    activity?.title = getString(R.string.transferToOwnAccount)
+                }
             }
         }
     }
@@ -113,5 +107,9 @@ class CreateTransactionFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    override fun accept(viewModel: ViewModel) {
+        watcher.invoke(viewModel)
     }
 }

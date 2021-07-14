@@ -4,25 +4,23 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.flowWithLifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
 import com.strawhat.mvidemo.R
+import com.strawhat.mvidemo.common.ObservableSourceFragment
 import com.strawhat.mvidemo.databinding.FragmentConfirmationBinding
-import com.strawhat.mvidemo.vms.TransactionVM
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
-
+import com.strawhat.mvidemo.mvi.bindings.ConfirmTransactionBindings
+import com.strawhat.mvidemo.mvi.event.UiEvent
+import com.strawhat.mvidemo.mvi.feature.TransactionFeature
+import com.strawhat.mvidemo.mvi.feature.ViewModel
+import io.reactivex.functions.Consumer
 
 /**
  * [Fragment] for confirming transaction
  */
-class ConfirmationFragment : Fragment() {
+class ConfirmationFragment : ObservableSourceFragment<UiEvent>(), Consumer<ViewModel> {
 
-    private val viewModel by activityViewModels<TransactionVM>()
+    private lateinit var bindings: ConfirmTransactionBindings
 
     private var _binding: FragmentConfirmationBinding? = null
 
@@ -33,46 +31,37 @@ class ConfirmationFragment : Fragment() {
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        binding.btnConfirm.setOnClickListener {
-            viewModel.onConfirmClicked()
-        }
-        binding.btnConfirm.setOnClickListener {
-            viewModel.onConfirmClicked()
-        }
-        viewModel.viewState.observe(viewLifecycleOwner, {
-            updateView(it)
-        })
-        viewModel.eventsFlow
-            .flowWithLifecycle(this.lifecycle, Lifecycle.State.STARTED)
-            .onEach { event ->
-                when (event) {
-                    TransactionVM.Event.NavigateToStart -> {
-                        val action = ConfirmationFragmentDirections.actionConfirmTransactionFragmentToHomeFragment()
-                        findNavController().navigate(action)
-                    }
-                    else -> {
-                        // TODO: What about other navigation requests?
-                    }
-                }
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        activity?.onBackPressedDispatcher?.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                onNext(UiEvent.BackPressed)
             }
-            .launchIn(lifecycleScope)
+        })
     }
 
-    private fun updateView(viewState: TransactionVM.State) {
-        when (viewState.transactionType) {
-            TransactionVM.TransactionType.SOMEONE_ELSE -> {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        bindings = ConfirmTransactionBindings(this, TransactionFeature)
+        binding.btnConfirm.setOnClickListener {
+            onNext(UiEvent.ConfirmClicked)
+        }
+        bindings.setup(this)
+    }
+
+    private fun updateView(viewModel: ViewModel) {
+        when (viewModel.transactionType) {
+            TransactionFeature.TransactionType.SOMEONE_ELSE -> {
                 activity?.title = getString(R.string.transferToSomeoneElse)
             }
-            TransactionVM.TransactionType.OWN -> {
+            TransactionFeature.TransactionType.OWN -> {
                 activity?.title = getString(R.string.transferToOwnAccount)
             }
         }
-        displayTransactionDetails(viewState)
+        displayTransactionDetails(viewModel)
     }
 
-    private fun displayTransactionDetails(state: TransactionVM.State) {
+    private fun displayTransactionDetails(state: ViewModel) {
         binding.tvTransactionDetails.text =
             getString(R.string.transaction_details_template, state.paymentType, state.service, state.account, state.startDate, state.limit)
     }
@@ -80,5 +69,9 @@ class ConfirmationFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    override fun accept(viewModel: ViewModel) {
+        updateView(viewModel)
     }
 }
